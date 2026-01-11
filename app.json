@@ -2,7 +2,7 @@
   "configVersion": "v3",
   "app": {
     "appId": 20800,
-    "appName": "Hello World",
+    "appName": "ZeppSlime",
     "appType": "app",
     "version": {
       "code": 1,
@@ -10,7 +10,7 @@
     },
     "icon": "icon.png",
     "vender": "zepp",
-    "description": "hello world app"
+    "description": "Convert ZeppOS smartwatches into SlimeVR trackers"
   },
   "permissions": [
     "data:os.device.info",
@@ -46,7 +46,7 @@
   },
   "i18n": {
     "en-US": {
-      "appName": "Hello World"
+      "appName": "ZeppSlime"
     }
   },
   "defaultLanguage": "en-US"
