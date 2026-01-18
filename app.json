@@ -14,7 +14,9 @@
   },
   "permissions": [
     "data:os.device.info",
-    "device:os.local_storage"
+    "device:os.local_storage",
+    "device:os.accelerometer",
+    "device:os.gyroscope"
   ],
   "runtime": {
     "apiVersion": {

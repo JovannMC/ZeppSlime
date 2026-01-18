@@ -4,6 +4,7 @@
     "": {
       "name": "helloworld",
       "dependencies": {
+        "@silver-zepp/vis-log": "^1.5.3",
         "@slimevr/firmware-protocol": "^0.6.6",
         "@slimevr/tracker-emulation": "^0.2.6",
         "@zeppos/zml": "^0.0.9",
@@ -14,6 +15,8 @@
     },
   },
   "packages": {
+    "@silver-zepp/vis-log": ["@silver-zepp/vis-log@1.5.3", "", {}, "sha512-CKOB3yjjTIrE9vADehZNTWXlt+SvQTym9ky8PRKMe7XxaW/pIrMfSi3Dwch9Z3C25GeqpSyWTvvCuLWVUZxR/g=="],
+
     "@slimevr/common": ["@slimevr/common@0.1.3", "", {}, "sha512-h+6pUSUY0EWKFU9AD6Znk9bc7j1AzC4BoL7KArTYkqj0CVqXP8Rj/RWmypGoid+rTjKXmr13Tl3uaHAQHoN32g=="],
 
     "@slimevr/firmware-protocol": ["@slimevr/firmware-protocol@0.6.6", "", { "dependencies": { "@slimevr/common": "0.1.3" } }, "sha512-vkwGP71Y0Ge5oDkRLhx4TSSDFSj5Wi+dXLPED+PrQANWl5iP4qTP7xL5HtgaJHg3Y9wKJnL/dK0jnG+Vnu9a1w=="],
