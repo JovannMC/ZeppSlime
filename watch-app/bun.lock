@@ -1,0 +1,32 @@
+{
+  "lockfileVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "helloworld",
+      "dependencies": {
+        "@silver-zepp/vis-log": "^1.5.3",
+        "@slimevr/firmware-protocol": "^0.6.6",
+        "@slimevr/tracker-emulation": "^0.2.6",
+        "@zeppos/zml": "^0.0.9",
+      },
+      "devDependencies": {
+        "@zeppos/device-types": "^3.0.0",
+      },
+    },
+  },
+  "packages": {
+    "@silver-zepp/vis-log": ["@silver-zepp/vis-log@1.5.3", "", {}, "sha512-CKOB3yjjTIrE9vADehZNTWXlt+SvQTym9ky8PRKMe7XxaW/pIrMfSi3Dwch9Z3C25GeqpSyWTvvCuLWVUZxR/g=="],
+
+    "@slimevr/common": ["@slimevr/common@0.1.3", "", {}, "sha512-h+6pUSUY0EWKFU9AD6Znk9bc7j1AzC4BoL7KArTYkqj0CVqXP8Rj/RWmypGoid+rTjKXmr13Tl3uaHAQHoN32g=="],
+
+    "@slimevr/firmware-protocol": ["@slimevr/firmware-protocol@0.6.6", "", { "dependencies": { "@slimevr/common": "0.1.3" } }, "sha512-vkwGP71Y0Ge5oDkRLhx4TSSDFSj5Wi+dXLPED+PrQANWl5iP4qTP7xL5HtgaJHg3Y9wKJnL/dK0jnG+Vnu9a1w=="],
+
+    "@slimevr/tracker-emulation": ["@slimevr/tracker-emulation@0.2.6", "", { "dependencies": { "@slimevr/common": "0.1.3", "@slimevr/firmware-protocol": "0.6.6", "strict-event-emitter-types": "^2.0.0" } }, "sha512-V6NjwXCTXiX918yNbdeyNnfdMVJIObQiQW+rLlh5NaS5YMKPaqUwGM3ALQfcNAWVNrGb88ypzZZP/DoyhEI4ew=="],
+
+    "@zeppos/device-types": ["@zeppos/device-types@3.0.1", "", {}, "sha512-7rUsKLFiTdwIU3NarEKbEoQjr2X1kE6/8ra+mM3+zXDnwhELPowwC4Sl5UGS71PjTa9Rb+s4WygOHkjeEmJcoA=="],
+
+    "@zeppos/zml": ["@zeppos/zml@0.0.9", "", {}, "sha512-D+xQh5Tu58XrFwKFPKPr33FzqIILEtd3vvOfmjclIvEqmuYNtBVKNIRwp7LsQasgtWOsa60iU0asstTxq89UIg=="],
+
+    "strict-event-emitter-types": ["strict-event-emitter-types@2.0.0", "", {}, "sha512-Nk/brWYpD85WlOgzw5h173aci0Teyv8YdIAEtV+N88nDB0dLlazZyJMIsN6eo1/AR61l+p6CJTG1JIyFaoNEEA=="],
+  }
+}

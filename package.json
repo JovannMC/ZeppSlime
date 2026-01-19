@@ -1,20 +1,14 @@
 {
-  "name": "helloworld",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@zeppos/device-types": "^3.0.0"
-  },
-  "dependencies": {
-    "@silver-zepp/vis-log": "^1.5.3",
-    "@slimevr/firmware-protocol": "^0.6.6",
-    "@slimevr/tracker-emulation": "^0.2.6",
-    "@zeppos/zml": "^0.0.9"
-  }
+	"name": "zeppslime-monorepo",
+	"private": true,
+	"workspaces": [
+		"./*"
+	],
+	"dependencies": {
+		"@slimevr/firmware-protocol": "^0.6.6"
+	},
+    "scripts": {
+        "dev:watch": "cd watch-app && zeus dev",
+        "dev:server": "cd forward-server && bun run tauri dev"
+    }
 }
