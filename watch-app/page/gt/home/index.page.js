@@ -50,6 +50,11 @@ function renderSensors() {
 // - the watch can act as a ble central, so connect to a peripheral server running on the phone/pc which relays data to the slimevr server
 // via UDP, which should have much lower latency than idea 1
 
+// idea 3
+// - app -> ble -> slimevr server
+// - the watch app acts as a ble peripheral, and the forward app on the pc/phone connects to it as a central to relay data to slimevr server
+// this can only be worked on once zeppos supports ble peripheral mode - https://discord.com/channels/1202787457456799784/1257851403897143306/1451325882328285304 ("Zepp Health" Discord server)
+
 const log = Logger.getLogger("ZeppSlime");
 const vis = new VisLog("index.js");
 let DEVICE_WIDTH = 0;
@@ -213,13 +218,13 @@ Page(
 						url: "http://localhost:5001/button/1",
 					})
 						.then((result) => {
-							console.log("result.status", result.status);
-							console.log("result.statusText", result.statusText);
-							console.log("result.headers", result.headers);
-							console.log("result.body", result.body);
+							vis.log("result.status", result.status);
+							vis.log("result.statusText", result.statusText);
+							vis.log("result.headers", result.headers);
+							vis.log("result.body", result.body);
 						})
 						.catch((error) => {
-							console.error("error=>", error);
+							vis.log("error=>", error);
 						});
 				},
 			});

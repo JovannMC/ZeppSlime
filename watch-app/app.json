@@ -1,55 +1,56 @@
 {
-  "configVersion": "v3",
-  "app": {
-    "appId": 20800,
-    "appName": "ZeppSlime",
-    "appType": "app",
-    "version": {
-      "code": 1,
-      "name": "1.0.1"
-    },
-    "icon": "icon.png",
-    "vender": "zepp",
-    "description": "Convert ZeppOS smartwatches into SlimeVR trackers"
-  },
-  "permissions": [
-    "data:os.device.info",
-    "device:os.local_storage",
-    "device:os.accelerometer",
-    "device:os.gyroscope"
-  ],
-  "runtime": {
-    "apiVersion": {
-      "compatible": "3.0.0",
-      "target": "3.0.0",
-      "minVersion": "3.0"
-    }
-  },
-  "debug": false,
-  "targets": {
-    "gt": {
-      "module": {
-        "page": {
-          "pages": [
-            "page/gt/home/index.page"
-          ]
-        }
-      },
-      "platforms": [
-        {
-          "st": "r"
-        },
-        {
-          "st": "s"
-        }
-      ],
-      "designWidth": 480
-    }
-  },
-  "i18n": {
-    "en-US": {
-      "appName": "ZeppSlime"
-    }
-  },
-  "defaultLanguage": "en-US"
+	"configVersion": "v3",
+	"app": {
+		"appId": 20800,
+		"appName": "ZeppSlime",
+		"appType": "app",
+		"version": {
+			"code": 1,
+			"name": "1.0.1"
+		},
+		"icon": "icon.png",
+		"vender": "zepp",
+		"description": "Convert ZeppOS smartwatches into SlimeVR trackers"
+	},
+	"permissions": [
+		"data:os.device.info",
+		"device:os.local_storage",
+		"device:os.accelerometer",
+		"device:os.gyroscope"
+	],
+	"runtime": {
+		"apiVersion": {
+			"compatible": "3.0.0",
+			"target": "3.0.0",
+			"minVersion": "3.0"
+		}
+	},
+	"debug": false,
+	"targets": {
+		"gt": {
+			"module": {
+				"page": {
+					"pages": ["page/gt/home/index.page"]
+				},
+				"app-side": {
+					"path": "app-side/index"
+				}
+			},
+			"platforms": [
+				{
+					"st": "r"
+				},
+				{
+					"st": "s"
+				}
+			],
+			"designWidth": 480
+		}
+	},
+	"i18n": {
+		"en-US": {
+			"appName": "ZeppSlime"
+		}
+	},
+	"defaultLanguage": "en-US"
 }
