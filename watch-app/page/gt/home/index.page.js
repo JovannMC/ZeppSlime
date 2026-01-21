@@ -24,6 +24,8 @@ let sensorText = {
 	accel: "none",
 	gyro: "none",
 };
+let accelData = null;
+let gyroData = null;
 
 function round2(value) {
 	if (typeof value !== "number") return value;
@@ -109,7 +111,7 @@ Page(
 
 			if (accelAvailable) {
 				try {
-					accel = new Accelerometer({ frequency: 50 });
+					accel = new Accelerometer();
 					accel.start();
 				} catch (e) {
 					vis.warn(`Failed to start accelerometer: ${e}`);
@@ -120,7 +122,7 @@ Page(
 
 			if (gyroAvailable) {
 				try {
-					gyro = new Gyroscope({ frequency: 50 });
+					gyro = new Gyroscope();
 					gyro.start();
 				} catch (e) {
 					vis.warn(`Failed to start gyroscope: ${e}`);
@@ -168,8 +170,10 @@ Page(
 				}
 
 				accel.onChange((data) => {
+					accelData = data;
 					sensorText.accel = `${round2(data.x)} ${round2(data.y)} ${round2(data.z)}`;
 					renderSensors();
+					this.sendIMUData();
 				});
 			} else {
 				sensorText.accel = "none";
@@ -192,14 +196,17 @@ Page(
 				}
 
 				gyro.onChange((data) => {
+					gyroData = data;
 					sensorText.gyro = `${round2(data.x)} ${round2(data.y)} ${round2(data.z)}`;
 					renderSensors();
+					this.sendIMUData();
 				});
 			} else {
 				sensorText.gyro = "none";
 				renderSensors();
 			}
 		},
+
 		fetchButton() {
 			hmUI.createWidget(hmUI.widget.BUTTON, {
 				x: (DEVICE_WIDTH - px(360)) / 2,
@@ -228,6 +235,33 @@ Page(
 						});
 				},
 			});
+		},
+
+
+
+		sendIMUData() {
+			if (!accelData || !gyroData) return; // wait until both have data
+
+			const endpoint = `/imu?ax=${accelData.x}&ay=${accelData.y}&az=${accelData.z}&gx=${gyroData.x}&gy=${gyroData.y}&gz=${gyroData.z}`;
+			this.forwardData(endpoint);
+		},
+
+		// api endpoints:
+		// GET - /button/:button
+		// GET - /wheel/:direction
+		// GET - /imu w/ query params - ax/ay/az = accel, gx/gy/gz = gyro
+		forwardData(endpoint) {
+			try {
+				this.httpRequest({
+					method: "get",
+					url: `http://localhost:5001${endpoint}`,
+				})
+					.catch((error) => {
+						vis.warn(`Failed to forward data: ${error}`);
+					});
+			} catch (e) {
+				vis.error(`Error in forwardData: ${e}`);
+			}
 		},
 	}),
 );
