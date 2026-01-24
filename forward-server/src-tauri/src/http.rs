@@ -8,7 +8,7 @@ use std::io::Result;
 use tauri::Emitter;
 
 pub async fn start_server(app_handle: tauri::AppHandle) -> Result<()> {
-    println!("Starting HTTP server - https://localhost:50001"); // will allow to be changed
+    println!("[HTTP] Starting HTTP server - http://0.0.0.0:5001"); // will allow to be changed
     let server = HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(app_handle.clone()))
@@ -37,7 +37,7 @@ async fn imu_data(
     query: web::Query<ImuData>,
     app_handle: web::Data<tauri::AppHandle>,
 ) -> impl Responder {
-    println!("IMU endpoint hit");
+    println!("[HTTP] IMU endpoint hit");
     println!(
         "Received IMU data: ax={}, ay={}, az={}, gx={}, gy={}, gz={}",
         query.ax, query.ay, query.az, query.gx, query.gy, query.gz
@@ -53,18 +53,18 @@ async fn imu_data(
 
 #[get("/button/{button}")]
 async fn press(button: web::Path<u8>, app_handle: web::Data<tauri::AppHandle>) -> impl Responder {
-    println!("Button endpoint hit");
-    println!("Button value: {}", button);
+    println!("[HTTP] Button endpoint hit");
+    println!("[HTTP] Button value: {}", button);
     let button = button.into_inner();
     let response;
     match BUTTON_MAP.iter().find(|(b, _)| *b == button) {
         Some((_, name)) => {
-            println!("Button pressed: {}", name);
+            println!("[HTTP] Button pressed: {}", name);
             response = format!("Button pressed: {}", name);
             let _ = app_handle.emit("button-pressed", serde_json::json!({ "button": name }));
         }
         None => {
-            println!("Unknown button pressed: {}", button);
+            println!("[HTTP] Unknown button pressed: {}", button);
             response = format!("Unknown button pressed: {}", button);
         }
     }
@@ -77,18 +77,18 @@ async fn wheel(
     direction: web::Path<u8>,
     app_handle: web::Data<tauri::AppHandle>,
 ) -> impl Responder {
-    println!("Wheel endpoint hit");
-    println!("Wheel direction value: {}", direction);
+    println!("[HTTP] Wheel endpoint hit");
+    println!("[HTTP] Wheel direction value: {}", direction);
     let direction = direction.into_inner();
     let response;
     match WHEEL_DIRECTION_MAP.iter().find(|(d, _)| *d == direction) {
         Some((_, name)) => {
-            println!("Wheel turned: {}", name);
+            println!("[HTTP] Wheel turned: {}", name);
             response = format!("Wheel turned: {}", name);
             let _ = app_handle.emit("wheel-turned", serde_json::json!({ "direction": name }));
         }
         None => {
-            println!("Unknown wheel direction: {}", direction);
+            println!("[HTTP] Unknown wheel direction: {}", direction);
             response = format!("Unknown wheel direction: {}", direction);
         }
     }
