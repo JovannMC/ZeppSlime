@@ -8,27 +8,33 @@ import { getDeviceInfo } from "@zos/device";
 import { px } from "@zos/utils";
 import { BasePage } from "@zeppos/zml/base-page";
 
-let text = null;
+import { BLEMaster } from "@silver-zepp/easy-ble";
+
 let forwardButton = null;
-let sensorText = {
-	battery: "none",
-	accel: "none",
-	gyro: "none",
-};
 let accelData = null;
 let gyroData = null;
 let lastSendTime = 0;
 let sendPending = false;
 const SEND_INTERVAL_MS = 40; // 25hz
-const QUEUE_THROTTLED_DATA = false; // if true, queue throttled data; if false, drop it
+const QUEUE_THROTTLED_DATA = false; // if true, queue throttled data; if false, drop it -- temporary, to see what works best
 
-function renderSensors() {
-	if (!text) return;
-	text.setProperty(
-		hmUI.prop.TEXT,
-		`Accel: ${sensorText.accel}\nGyro: ${sensorText.gyro}`,
-	);
-}
+let serviceUuid = "fb0e0c26-a91d-4df7-9b52-692b023c63b3".toUpperCase();
+let imuUuid = "fb0e0c27-a91d-4df7-9b52-692b023c63b3".toUpperCase();
+let buttonUuid = "fb0e0c28-a91d-4df7-9b52-692b023c63b3".toUpperCase();
+let wheelUuid = "fb0e0c29-a91d-4df7-9b52-692b023c63b3".toUpperCase();
+
+const service = {
+	[serviceUuid]: {
+		[imuUuid]: [],
+		[buttonUuid]: [],
+		[wheelUuid]: [],
+	},
+};
+
+let ble = null;
+let bleProfile = null;
+let bleMac = null;
+let bleReady = false;
 
 // UDP communication not possible with ZeppOS and app, so alternate approaches needed
 
@@ -133,8 +139,6 @@ Page(
 					});
 				} catch (e) {
 					vis.warn(`Failed to init accelerometer: ${e}`);
-					sensorText.accel = "none";
-					renderSensors();
 				}
 			}
 
@@ -148,21 +152,8 @@ Page(
 					});
 				} catch (e) {
 					vis.warn(`Failed to init gyroscope: ${e}`);
-					sensorText.gyro = "none";
-					renderSensors();
 				}
 			}
-
-			// if (batteryAvailable) {
-			// 	try {
-			// 		this.battery = new Battery();
-			// 		this.battery.onChange((level) => {
-			// 			vis.info(`Battery level: ${level}%`);
-			// 		});
-			// 	} catch (e) {
-			// 		vis.warn(`Failed to init battery: ${e}`);
-			// 	}
-			// }
 
 			this.sensorsInitialized = true;
 		},
@@ -192,6 +183,45 @@ Page(
 				}
 			}
 
+			if (!ble) {
+				bleReady = false;
+				ble = new BLEMaster();
+				vis.log("[BLE] initialized BLE master");
+			}
+
+			ble.startScan((device) => {
+				vis.log(`[BLE] found device: ${device.dev_name} - ${device.dev_addr}`);
+				if (ble.get.hasService(serviceUuid)) {
+					ble.stopScan();
+
+					vis.log(`[BLE] device has IMU service: ${device.dev_addr}`);
+
+					bleMac = device.dev_addr;
+
+					ble.connect(bleMac, (result) => {
+						if (result.connected) {
+							vis.log(`[BLE] connected to device: ${bleMac}`);
+							bleProfile = ble.generateProfileObject(service);
+
+							ble.startListener(bleProfile, (response) => {
+								if (response.success) {
+									bleReady = true;
+									vis.log("[BLE] BLE profile listener started");
+								} else {
+									vis.warn(
+										`[BLE] BLE profile listener error: ${response.message}`,
+									);
+								}
+							});
+						} else {
+							vis.warn(
+								`[BLE] failed to connect to device: ${bleMac} -- ${result.status}`,
+							);
+						}
+					});
+				}
+			});
+
 			vis.info("Streaming enabled");
 		},
 
@@ -218,12 +248,21 @@ Page(
 				}
 			}
 
+			if (ble) {
+				try {
+					ble.quit();
+				} catch (e) {
+					vis.warn(`BLE quit error: ${e}`);
+				}
+				bleReady = false;
+				bleProfile = null;
+				ble = null; // should i be doing this and re-initializing every time streaming starts?
+			}
+
 			vis.info("Streaming disabled");
 		},
 
 		sensorData() {
-			//renderSensors();
-
 			// check sensor data
 			const accelAvailable = checkSensor(Accelerometer);
 			const gyroAvailable = checkSensor(Gyroscope);
@@ -245,8 +284,6 @@ Page(
 					accel.start();
 				} catch (e) {
 					vis.warn(`Failed to start accelerometer: ${e}`);
-					sensorText.accel = "none";
-					renderSensors();
 				}
 			}
 
@@ -258,84 +295,28 @@ Page(
 					gyro.start();
 				} catch (e) {
 					vis.warn(`Failed to start gyroscope: ${e}`);
-					sensorText.gyro = "none";
-					renderSensors();
 				}
 			}
 
 			if (batteryAvailable) {
 				battery = new Battery();
-				// try {
-				// 	const initialBatteryLevel = battery.getCurrent();
-				// 	vis.info(`Battery level: ${initialBatteryLevel}%`);
-				// 	sensorText.battery = `${initialBatteryLevel}%`;
-				// 	renderSensors();
-				// } catch (e) {
-				// 	vis.warn(`Failed to read battery: ${e}`);
-				// 	sensorText.battery = "none";
-				// 	renderSensors();
-				// }
-
 				battery.onChange((level) => {
 					vis.info(`Battery level: ${level}%`);
-					// sensorText.battery = `${level}%`;
-					// renderSensors();
 				});
-			} else {
-				//sensorText.battery = "none";
-				//renderSensors();
 			}
 
 			if (accel) {
-				// try {
-				// 	const accelData = accel.getCurrent();
-				// 	const { x, y, z } = accelData;
-				// 	const roundX = round2(x);
-				// 	const roundY = round2(y);
-				// 	const roundZ = round2(z);
-				// 	sensorText.accel = `${roundX} ${roundY} ${roundZ}`;
-				// 	renderSensors();
-				// } catch (e) {
-				// 	vis.warn(`Failed to read accelerometer: ${e}`);
-				// 	sensorText.accel = "none";
-				// 	renderSensors();
-				// }
-
 				accel.onChange((data) => {
 					accelData = data;
-					// sensorText.accel = `${round2(data.x)} ${round2(data.y)} ${round2(data.z)}`;
-					// renderSensors();
 					this.sendIMUData();
 				});
-			} else {
-				// sensorText.accel = "none";
-				//renderSensors();
 			}
 
 			if (gyro) {
-				// try {
-				// 	const gyroData = gyro.getCurrent();
-				// 	const { x, y, z } = gyroData;
-				// 	const roundX = round2(x);
-				// 	const roundY = round2(y);
-				// 	const roundZ = round2(z);
-				// 	sensorText.gyro = `${roundX} ${roundY} ${roundZ}`;
-				// 	renderSensors();
-				// } catch (e) {
-				// 	vis.warn(`Failed to read gyroscope: ${e}`);
-				// 	sensorText.gyro = "none";
-				// 	renderSensors();
-				// }
-
 				gyro.onChange((data) => {
 					gyroData = data;
-					// sensorText.gyro = `${round2(data.x)} ${round2(data.y)} ${round2(data.z)}`;
-					// renderSensors();
 					this.sendIMUData();
 				});
-			} else {
-				// sensorText.gyro = "none";
-				// renderSensors();
 			}
 		},
 
@@ -390,8 +371,26 @@ Page(
 			}
 
 			lastSendTime = now;
-			const endpoint = `/imu?ax=${accelData.x}&ay=${accelData.y}&az=${accelData.z}&gx=${gyroData.x}&gy=${gyroData.y}&gz=${gyroData.z}`;
-			this.forwardData(endpoint);
+
+			// http
+			// const endpoint = `/imu?ax=${accelData.x}&ay=${accelData.y}&az=${accelData.z}&gx=${gyroData.x}&gy=${gyroData.y}&gz=${gyroData.z}`;
+			// this.forwardData(endpoint);
+
+			// ble
+			const payload = JSON.stringify({
+				ax: accelData.x,
+				ay: accelData.y,
+				az: accelData.z,
+				gx: gyroData.x,
+				gy: gyroData.y,
+				gz: gyroData.z,
+			});
+
+			try {
+				if (bleReady) ble.write.characteristic(imuUuid, payload, true);
+			} catch (e) {
+				vis.warn(`[BLE] write error: ${e}`);
+			}
 		},
 
 		// api endpoints:

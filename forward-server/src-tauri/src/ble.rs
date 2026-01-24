@@ -24,7 +24,10 @@ pub async fn start_ble(app_handle: tauri::AppHandle) -> Result<()> {
             Characteristic {
                 // IMU characteristic
                 uuid: Uuid::from_string("fb0e0c27-a91d-4df7-9b52-692b023c63b3"),
-                properties: vec![CharacteristicProperty::Write],
+                properties: vec![
+                    CharacteristicProperty::Write,
+                    CharacteristicProperty::WriteWithoutResponse,
+                ],
                 permissions: vec![AttributePermission::Writeable],
                 value: None,
                 descriptors: vec![],
@@ -32,7 +35,10 @@ pub async fn start_ble(app_handle: tauri::AppHandle) -> Result<()> {
             Characteristic {
                 // Button characteristic
                 uuid: Uuid::from_string("fb0e0c28-a91d-4df7-9b52-692b023c63b3"),
-                properties: vec![CharacteristicProperty::Write],
+                properties: vec![
+                    CharacteristicProperty::Write,
+                    CharacteristicProperty::WriteWithoutResponse,
+                ],
                 permissions: vec![AttributePermission::Writeable],
                 value: None,
                 descriptors: vec![],
@@ -40,7 +46,10 @@ pub async fn start_ble(app_handle: tauri::AppHandle) -> Result<()> {
             Characteristic {
                 // Wheel characteristic
                 uuid: Uuid::from_string("fb0e0c29-a91d-4df7-9b52-692b023c63b3"),
-                properties: vec![CharacteristicProperty::Write],
+                properties: vec![
+                    CharacteristicProperty::Write,
+                    CharacteristicProperty::WriteWithoutResponse,
+                ],
                 permissions: vec![AttributePermission::Writeable],
                 value: None,
                 descriptors: vec![],
@@ -122,10 +131,8 @@ pub fn handle_updates(
             value,
             responder,
         } => {
-            println!(
-                "WriteRequest received on characteristic: {}",
-                request.characteristic
-            );
+                println!("[BLE] WriteRequest received from {} -- characteristic: {}", request.client, request.characteristic);
+
 
             if request.characteristic == *imu_uuid {
                 println!("[BLE] IMU data received via BLE");
@@ -162,11 +169,11 @@ pub fn handle_updates(
                 println!("[BLE] Unknown characteristic write: {:?}", value);
             }
 
-            responder
-                .send(WriteRequestResponse {
-                    response: RequestResponse::Success,
-                })
-                .unwrap();
+    responder
+        .send(WriteRequestResponse {
+            response: RequestResponse::Success,
+        })
+        .unwrap();
         }
     }
 }

@@ -37,6 +37,7 @@
       "name": "zeppslime-app",
       "version": "1.0.0",
       "dependencies": {
+        "@silver-zepp/easy-ble": "^1.7.8-e",
         "@silver-zepp/vis-log": "^1.5.3",
         "@zeppos/zml": "^0.0.9",
       },
@@ -159,6 +160,8 @@
     "@rollup/rollup-win32-x64-gnu": ["@rollup/rollup-win32-x64-gnu@4.55.1", "", { "os": "win32", "cpu": "x64" }, "sha512-xGGY5pXj69IxKb4yv/POoocPy/qmEGhimy/FoTpTSVju3FYXUQQMFCaZZXJVidsmGxRioZAwpThl/4zX41gRKg=="],
 
     "@rollup/rollup-win32-x64-msvc": ["@rollup/rollup-win32-x64-msvc@4.55.1", "", { "os": "win32", "cpu": "x64" }, "sha512-SPEpaL6DX4rmcXtnhdrQYgzQ5W2uW3SCJch88lB2zImhJRhIIK44fkUrgIV/Q8yUNfw5oyZ5vkeQsZLhCb06lw=="],
+
+    "@silver-zepp/easy-ble": ["@silver-zepp/easy-ble@1.7.8-e", "", {}, "sha512-ZXDghS5bRTttOuwUkkWWhhvw/7E+diq/zyhpif1nvfR6BgN/L5OnMVPi9CXcYEP1rFOLVQ3ytQ6d1oJQFChZUg=="],
 
     "@silver-zepp/vis-log": ["@silver-zepp/vis-log@1.5.3", "", {}, "sha512-CKOB3yjjTIrE9vADehZNTWXlt+SvQTym9ky8PRKMe7XxaW/pIrMfSi3Dwch9Z3C25GeqpSyWTvvCuLWVUZxR/g=="],
 
